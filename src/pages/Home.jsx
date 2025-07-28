@@ -15,7 +15,7 @@ function Home() {
         const data = await getProducts();
         setProducts(data);
         setLoading(false);
-      } catch (error) {
+      } catch {
         setError("Failed to load products");
         setLoading(false);
       }
