@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { getProducts } from "../api/api";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import "../styles/home.css";
 
 function Home() {
   const [products, setProducts] = useState([]);
