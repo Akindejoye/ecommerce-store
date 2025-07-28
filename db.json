@@ -1,0 +1,22 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Laptop",
+      "price": 999.99,
+      "description": "High-performing laptop",
+      "image": "https://via.placeholder.com/150",
+      "category": "Electronics"
+    },
+    {
+      "id": 2,
+      "name": "Headphones",
+      "price": 99.99,
+      "description": "Wireless headphones",
+      "image": "https://via.placeholder.com/150",
+      "category": "Electronics"
+    }
+  ],
+  "users": [],
+  "orders": []
+}
