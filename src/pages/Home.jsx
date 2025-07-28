@@ -1,9 +1,40 @@
+import { useEffect, useState } from "react";
+import { getProducts } from "../api/api";
+import { Link } from "react-router-dom";
+import ProductCard from "../components/ProductCard";
+
 function Home() {
+  const [products, setProducts] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(function () {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data);
+        setLoading(false);
+      } catch (error) {
+        setError("Failed to load products");
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+  if (error) return <div>{error}</div>;
+
   return (
-    <div>
-      <div>
-        <h2>Welcome to E-Store</h2>
-        <p>Product listing will go here.</p>
+    <div className="home">
+      <h2>Welcome to E-Store</h2>
+      <div className="product-grid">
+        {products.map((product) => (
+          <Link key={product.id} to={`/product/${product.id}`}>
+            <ProductCard product={product} />
+          </Link>
+        ))}
       </div>
     </div>
   );
