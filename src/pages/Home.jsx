@@ -32,7 +32,7 @@ function Home() {
       <h2>Welcome to E-Store</h2>
       <div className="product-grid">
         {products.map((product) => (
-          <Link key={product.id} to={`/product/${product.id}`}>
+          <Link key={product.id} to={`/product/${product.id}`} className="link">
             <ProductCard product={product} />
           </Link>
         ))}
