@@ -63,3 +63,30 @@ export const cartReducer = (state, action) => {
       return state;
   }
 };
+
+export const userReducer = (state, action) => {
+  switch (action.type) {
+    case "LOGIN":
+      // Simulate storing token in localStorage
+      localStorage.setItem("sessionToken", action.payload.token);
+      return {
+        ...state,
+        isAuthenticated: true,
+        user: action.payload.user,
+        token: action.payload.token,
+      };
+
+    case "LOGOUT":
+      // Clear token from localStorage
+      localStorage.removeItem("sessionToken");
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+        token: null,
+      };
+
+    default:
+      return state;
+  }
+};
