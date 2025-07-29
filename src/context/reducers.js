@@ -3,13 +3,13 @@ export const cartReducer = (state, action) => {
     case "ADD_TO_CART": {
       // Check if item already exists in cart
       const existingItem = state.items.find(
-        (item) => item.id === action.payload
+        (item) => item.id === action.payload.id
       );
       if (existingItem) {
         // Update quantity
         const updatedItems = state.items.map((item) =>
           item.id === action.payload.id
-            ? { item, quantity: item.quantity + 1 }
+            ? { ...item, quantity: item.quantity + 1 }
             : item
         );
         return {
