@@ -1,6 +1,16 @@
 export const cartReducer = (state, action) => {
   switch (action.type) {
     case "ADD_TO_CART": {
+      // Validate payload
+      if (
+        !action.payload ||
+        typeof action.payload.price !== "number" ||
+        !action.payload.id
+      ) {
+        console.warn("Invalid product in ADD_TO_CART", action.payload);
+        return state;
+      }
+
       // Check if item already exists in cart
       const existingItem = state.items.find(
         (item) => item.id === action.payload.id
@@ -30,6 +40,11 @@ export const cartReducer = (state, action) => {
     }
 
     case "REMOVE_FROM_CART": {
+      if (!action.payload || !action.payload.id) {
+        console.warn("Invalid payload in REMOVE_FROM_CART:", action.payload);
+        return state;
+      }
+
       const filteredItems = state.items.filter(
         (item) => item.id !== action.payload.id
       );
@@ -44,6 +59,15 @@ export const cartReducer = (state, action) => {
     }
 
     case "UPDATE_QUANTITY": {
+      if (
+        !action.payload ||
+        !action.payload.id ||
+        typeof action.payload.quantity !== "number"
+      ) {
+        console.warn("Invalid payload in UPDATE_QUANTITY:", action.payload);
+        return state;
+      }
+
       const updatedQuantityItems = state.items.map((item) =>
         item.id === action.payload.id
           ? { ...item, quantity: action.payload.quantity }

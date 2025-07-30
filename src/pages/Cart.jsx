@@ -4,6 +4,7 @@ import "../styles/cart.css";
 
 function Cart() {
   const { cart } = useContext(CartContext);
+  console.log(cart);
 
   return (
     <div className="cart">
