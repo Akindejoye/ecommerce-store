@@ -26,7 +26,7 @@ function Navbar() {
         <li>
           {user.isAuthenticated ? (
             <>
-              <span>Welcome, {user.user.username}</span>
+              <span>Welcome, {user.user?.username}</span>
               <button onClick={logout}>Logout</button>
             </>
           ) : (
