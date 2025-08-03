@@ -5,12 +5,36 @@ import { cartReducer } from "./reducers";
 export const CartContext = createContext();
 
 export const CartProvider = ({ children }) => {
-  const initialState = {
-    items: [],
-    total: 0,
+  const getInitialCart = () => {
+    const savedItems = localStorage.getItem("cartItems");
+    let items = [];
+    if (savedItems) {
+      try {
+        items = JSON.parse(savedItems);
+        // Validate items
+        items = items.filter(
+          (item) =>
+            item &&
+            typeof item.id !== "undefined" &&
+            typeof item.price === "number" &&
+            typeof item.quantity === "number" &&
+            item.quantity > 0
+        );
+      } catch (error) {
+        console.warn("Invalid cart items in localStorage", error);
+        items = [];
+      }
+    }
+    return {
+      items,
+      total: items.reduce(
+        (sum, item) => sum + item.price * item.price * item.quantity,
+        0
+      ),
+    };
   };
 
-  const [state, dispatch] = useReducer(cartReducer, initialState);
+  const [state, dispatch] = useReducer(cartReducer, getInitialCart());
 
   const addToCart = (product) => {
     dispatch({ type: "ADD_TO_CART", payload: product });
@@ -24,9 +48,19 @@ export const CartProvider = ({ children }) => {
     dispatch({ type: "UPDATE_QUANTITY", payload: { id, quantity } });
   };
 
+  const clearCart = () => {
+    dispatch({ type: "CLEAR_CART" });
+  };
+
   return (
     <CartContext.Provider
-      value={{ cart: state, addToCart, removeFromCart, updateQuantity }}>
+      value={{
+        cart: state,
+        addToCart,
+        removeFromCart,
+        updateQuantity,
+        clearCart,
+      }}>
       {children}
     </CartContext.Provider>
   );
