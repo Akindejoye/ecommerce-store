@@ -15,28 +15,22 @@ export const cartReducer = (state, action) => {
       const existingItem = state.items.find(
         (item) => item.id === action.payload.id
       );
+      let newItems;
       if (existingItem) {
-        // Update quantity
-        const updatedItems = state.items.map((item) =>
+        newItems = state.items.map((item) =>
           item.id === action.payload.id
             ? { ...item, quantity: item.quantity + 1 }
             : item
         );
-        return {
-          ...state,
-          items: updatedItems,
-          total: updatedItems.reduce(
-            (sum, item) => sum + item.price * item.quantity,
-            0
-          ),
-        };
+      } else {
+        newItems = [...state.items, { ...action.payload, quantity: 1 }];
       }
-      // Add new item
-      return {
-        ...state,
-        items: [...state.items, { ...action.payload, quantity: 1 }],
-        total: state.total + action.payload.price,
-      };
+      const newTotal = newItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      localStorage.setItem("cartItems", JSON.stringify(newItems));
+      return { ...state, items: newItems, total: newTotal };
     }
 
     case "REMOVE_FROM_CART": {
@@ -45,17 +39,15 @@ export const cartReducer = (state, action) => {
         return state;
       }
 
-      const filteredItems = state.items.filter(
+      const newItems = state.items.filter(
         (item) => item.id !== action.payload.id
       );
-      return {
-        ...state,
-        items: filteredItems,
-        total: filteredItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
-      };
+      const newTotal = newItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+      );
+      localStorage.setItem("cartItems", JSON.stringify(newItems));
+      return { ...state, items: newItems, total: newTotal };
     }
 
     case "UPDATE_QUANTITY": {
@@ -68,20 +60,24 @@ export const cartReducer = (state, action) => {
         return state;
       }
 
-      const updatedQuantityItems = state.items.map((item) =>
-        item.id === action.payload.id
-          ? { ...item, quantity: action.payload.quantity }
-          : item
+      const newItems = state.items
+        .map((item) =>
+          item.id === action.payload.id
+            ? { ...item, quantity: action.payload.quantity }
+            : item
+        )
+        .filter((item) => item.quantity > 0);
+      const newTotal = newItems.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
       );
-      return {
-        ...state,
-        items: updatedQuantityItems.filter((item) => item.quantity > 0), // Remove items with quantity 0
-        total: updatedQuantityItems.reduce(
-          (sum, item) => sum + item.price * item.quantity,
-          0
-        ),
-      };
+      localStorage.setItem("cartItems", JSON.stringify(newItems));
+      return { ...state, items: newItems, total: newTotal };
     }
+
+    case "CLEAR_CART":
+      localStorage.removeItem("cartItems");
+      return { ...state, items: [], total: 0 };
 
     default:
       return state;
