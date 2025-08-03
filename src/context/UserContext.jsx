@@ -1,13 +1,18 @@
 /* eslint-disable react-refresh/only-export-components */
-import { createContext, useEffect, useReducer } from "react";
+import { createContext, useContext, useEffect, useReducer } from "react";
 import { userReducer } from "./reducers";
+import { CartContext } from "./CartContext";
 
 export const UserContext = createContext();
 
 export const UserProvider = ({ children }) => {
+  const { clearCart } = useContext(CartContext); // Access clearCart
+
   const initialState = {
     isAuthenticated: !!localStorage.getItem("sessionToken"), // Check token on init
-    user: null,
+    user: localStorage.getItem("username")
+      ? { username: localStorage.getItem("username") }
+      : null,
     token: localStorage.getItem("sessionToken") || null,
   };
 
@@ -16,10 +21,11 @@ export const UserProvider = ({ children }) => {
   // Sync state with localStorage on mount
   useEffect(() => {
     const token = localStorage.getItem("sessionToken");
-    if (token && !state.isAuthenticated) {
+    const username = localStorage.getItem("username");
+    if (token && !state.isAuthenticated && username) {
       dispatch({
         type: "LOGIN",
-        payload: { user: { username: "Guest" }, token }, // Mock user data
+        payload: { user: { username }, token }, // Mock user data
       });
     }
   }, []);
@@ -33,12 +39,13 @@ export const UserProvider = ({ children }) => {
 
   const logout = () => {
     dispatch({ type: "LOGOUT" });
+    clearCart(); // Clear cart on logout
   };
 
   return (
     <UserContext.Provider
       value={{
-        user: state,
+        user: state.user,
         login,
         logout,
         isAuthenticated: state.isAuthenticated,
