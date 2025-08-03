@@ -93,6 +93,7 @@ export const userReducer = (state, action) => {
     case "LOGIN":
       // Simulate storing token in localStorage
       localStorage.setItem("sessionToken", action.payload.token);
+      localStorage.setItem("username", action.payload.user.username);
       return {
         ...state,
         isAuthenticated: true,
@@ -103,6 +104,7 @@ export const userReducer = (state, action) => {
     case "LOGOUT":
       // Clear token from localStorage
       localStorage.removeItem("sessionToken");
+      localStorage.removeItem("username");
       return {
         ...state,
         isAuthenticated: false,
