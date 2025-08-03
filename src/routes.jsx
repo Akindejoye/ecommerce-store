@@ -4,6 +4,7 @@ import Navbar from "./components/Navbar";
 import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const router = createBrowserRouter([
   {
@@ -27,10 +28,10 @@ const router = createBrowserRouter([
   {
     path: "/cart",
     element: (
-      <>
+      <ProtectedRoute>
         <Navbar />
         <Cart />
-      </>
+      </ProtectedRoute>
     ),
   },
   {
