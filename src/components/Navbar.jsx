@@ -6,12 +6,12 @@ import "../styles/navbar.css";
 
 function Navbar() {
   const { cart } = useContext(CartContext);
-  const { user, logout } = useContext(UserContext);
+  const { user, isAuthenticated, logout } = useContext(UserContext);
 
-  const cartItemCount = cart.items.reduce(
-    (sum, item) => sum + item.quantity,
-    0
-  );
+  // const cartItemCount = cart.items.reduce(
+  //   (sum, item) => sum + item.quantity,
+  //   0
+  // );
 
   return (
     <nav className="navbar">
@@ -21,12 +21,12 @@ function Navbar() {
           <Link to="/">Home</Link>
         </li>
         <li>
-          <Link to="/cart">Cart ({cartItemCount})</Link>
+          <Link to="/cart">Cart ({cart.items.length})</Link>
         </li>
         <li>
-          {user.isAuthenticated ? (
+          {isAuthenticated ? (
             <>
-              <span>Welcome, {user.user?.username}</span>
+              <span>Welcome, {user?.username || "User"}</span>
               <button onClick={logout}>Logout</button>
             </>
           ) : (

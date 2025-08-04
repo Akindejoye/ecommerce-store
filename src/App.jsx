@@ -5,11 +5,11 @@ import { UserProvider } from "./context/UserContext";
 
 function App() {
   return (
-    <UserProvider>
-      <CartProvider>
+    <CartProvider>
+      <UserProvider>
         <RouterProvider router={router} />
-      </CartProvider>
-    </UserProvider>
+      </UserProvider>
+    </CartProvider>
   );
 }
 
