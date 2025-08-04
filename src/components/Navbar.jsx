@@ -23,6 +23,7 @@ function Navbar() {
         <li>
           <Link to="/cart">Cart ({cart.items.length})</Link>
         </li>
+        <li>{isAuthenticated && <Link to="/checkout">Checkout</Link>}</li>
         <li>
           {isAuthenticated ? (
             <>

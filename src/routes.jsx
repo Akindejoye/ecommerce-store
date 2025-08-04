@@ -5,6 +5,7 @@ import ProductDetails from "./pages/ProductDetails";
 import Login from "./pages/Login";
 import Cart from "./pages/Cart";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Checkout from "./pages/Checkout";
 
 const router = createBrowserRouter([
   {
@@ -41,6 +42,15 @@ const router = createBrowserRouter([
         <Navbar />
         <Login />
       </>
+    ),
+  },
+  {
+    path: "/checkout",
+    element: (
+      <ProtectedRoute>
+        <Navbar />
+        <Checkout />
+      </ProtectedRoute>
     ),
   },
 ]);
