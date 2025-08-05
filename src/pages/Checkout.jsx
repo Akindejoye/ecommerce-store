@@ -37,14 +37,13 @@ function Checkout() {
         ...formData,
         createdAt: new Date().toISOString(),
       };
-      const postItem = await postOrder(order);
-      console.log("Post Order is: ", postItem);
+      console.log(order);
+      await postOrder(order);
       clearCart();
       setOrderStatus("Order placed successfully!");
       setLoading(false);
     } catch (error) {
       setError(error.message);
-      console.log(error);
       setLoading(false);
     }
   };

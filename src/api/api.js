@@ -23,13 +23,11 @@ export const getProductById = async (id) => {
 };
 
 export const postOrder = async (order) => {
-  const response = await axios.post(`${API_URL}/orders`, {
-    method: "POST",
-    Headers: { "content-Type": "application/json" },
-    body: JSON.stringify(order),
+  const response = await axios.post(`${API_URL}/orders`, order, {
+    headers: { "content-Type": "application/json" },
   });
-  if (!response.ok) {
+  if (response.status !== 200 && response.status !== 201) {
     throw new Error("Failed to place order");
   }
-  return response.json();
+  return response.data;
 };
