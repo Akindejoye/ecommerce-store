@@ -22,6 +22,14 @@ export const getProductById = async (id) => {
   }
 };
 
+export const getProuctsByQuery = async (searchQuery = "", category = "All") => {
+  const params = {};
+  if (searchQuery) params.name_like = searchQuery;
+  if (category !== "All") params.category = category;
+  const response = await axios.get(`${API_URL}/products`, { params });
+  return response.data;
+};
+
 export const postOrder = async (order) => {
   const response = await axios.post(`${API_URL}/orders`, order, {
     headers: { "content-Type": "application/json" },
