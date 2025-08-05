@@ -34,7 +34,8 @@ export const getProductsByQuery = async (
 };
 
 export const postOrder = async (order) => {
-  const response = await axios.post(`${API_URL}/orders`, order, {
+  const orderData = { body: JSON.stringify(order) }; // Store as stringified body
+  const response = await axios.post(`${API_URL}/orders`, orderData, {
     headers: { "content-Type": "application/json" },
   });
   if (response.status !== 200 && response.status !== 201) {
