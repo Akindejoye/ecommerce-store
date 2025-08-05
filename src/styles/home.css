@@ -1,15 +1,39 @@
 .home {
-  padding: 2rem;
+  padding: 1rem;
   max-width: 1200px;
-  margin: 0 auto;
+  margin: 2rem auto;
 }
 
 .home h2 {
   margin-bottom: 1rem;
 }
 
-.product-grid {
+.filters {
+  margin-bottom: 0.7rem;
+}
+
+.filters input {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  flex: 1;
+}
+
+.filters select {
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.product-list {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
   gap: 1rem;
+}
+
+.link {
+  text-decoration: none;
+  color: inherit;
 }

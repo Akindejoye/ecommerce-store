@@ -22,9 +22,12 @@ export const getProductById = async (id) => {
   }
 };
 
-export const getProuctsByQuery = async (searchQuery = "", category = "All") => {
+export const getProductsByQuery = async (
+  searchQuery = "",
+  category = "All"
+) => {
   const params = {};
-  if (searchQuery) params.name_like = searchQuery;
+  if (searchQuery) params.name_like = searchQuery.toLowerCase();
   if (category !== "All") params.category = category;
   const response = await axios.get(`${API_URL}/products`, { params });
   return response.data;

@@ -23,6 +23,14 @@
       "description": "Bestseller novel",
       "image": "https://images.unsplash.com/photo-1517770413964-df8ca61194a6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Ym9va3xlbnwwfHwwfHx8MA%3D%3D",
       "category": "Books"
+    },
+    {
+      "id": "4",
+      "name": "Summit Appliance FFBF181ES2KIT48 48",
+      "price": 2499.73,
+      "description": "Summit Appliance FFBF181ES2KIT48 48\" Wide Bottom Freezer Refrigerator Set; 23.4 cu.ft; Grill Included; Adjustable Glass Shelves; No-frost Operation; Child Lockation; Child Lock",
+      "image": "https://m.media-amazon.com/images/I/61RLdl9-w9L._AC_SY879_.jpg",
+      "category": "Appliances"
     }
   ],
   "users": [],
