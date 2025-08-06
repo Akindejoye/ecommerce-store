@@ -1,8 +1,9 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { getProductsByQuery } from "../api/api";
 import { Link } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import "../styles/home.css";
+import { CartContext } from "../context/CartContext";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -11,26 +12,39 @@ function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("All");
 
+  const { addToCart } = useContext(CartContext);
+
   // Debounce function
   const debounce = (func, delay) => {
     let timeoutId;
     return (...args) => {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(() => {
+        console.log("Debounce fetch:", ...args); // Debug
         func(...args);
       }, delay);
     };
   };
 
   // Fetch Products
-  const fetchProducts = useCallback(async (query, cat) => {
+  const fetchProducts = useCallback(async (query, filterType) => {
     setLoading(true);
     try {
-      const data = await getProductsByQuery(query, cat);
-      console.log("Fetched products", data); // Debug
-      setProducts(data);
+      const data = await getProductsByQuery(query, filterType);
+      console.log("Raw API data:", data); // Debug raw data
+      let filteredData = data || []; // Ensure data is array
+      if (filterType === "search" && query) {
+        const lowerQuery = query.toLowerCase();
+        filteredData = data.filter(
+          (product) =>
+            product.name.toLowerCase().includes(lowerQuery) ||
+            product.category.toLowerCase().includes(lowerQuery)
+        );
+      }
+      console.log("Fethced products:", filteredData); // Debug
+      setProducts(filteredData);
       setLoading(false);
-    } catch {
+    } catch (error) {
       console.error("Fetch error:", error); // Debug
       setError("Failed to fetch products");
       setLoading(false);
@@ -45,15 +59,22 @@ function Home() {
   // Initial fetch
   useEffect(
     function () {
-      fetchProducts("", "All");
+      fetchProducts("", "category");
     },
     [fetchProducts]
   );
 
-  // Handle search and category change
+  // Handle search
   useEffect(() => {
-    debouncedFetch(searchQuery, category);
-  }, [searchQuery, category, debouncedFetch]);
+    setCategory("All"); // Reset category when searching
+    debouncedFetch(searchQuery, "search");
+  }, [searchQuery, debouncedFetch]);
+
+  // Handle category
+  useEffect(() => {
+    setSearchQuery(""); // Reset search when changing category
+    fetchProducts(category, "category");
+  }, [category, fetchProducts]);
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -65,7 +86,7 @@ function Home() {
       <div className="filters">
         <input
           type="text"
-          placeholder="Search products..."
+          placeholder="Search products or categories..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
         />

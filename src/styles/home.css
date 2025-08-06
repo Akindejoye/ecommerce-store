@@ -1,15 +1,18 @@
 .home {
-  padding: 1rem;
   max-width: 1200px;
   margin: 2rem auto;
+  padding: 1rem;
 }
 
 .home h2 {
+  text-align: center;
   margin-bottom: 1rem;
 }
 
 .filters {
-  margin-bottom: 0.7rem;
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
 }
 
 .filters input {

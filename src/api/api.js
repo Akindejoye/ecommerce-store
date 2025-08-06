@@ -22,14 +22,14 @@ export const getProductById = async (id) => {
   }
 };
 
-export const getProductsByQuery = async (
-  searchQuery = "",
-  category = "All"
-) => {
+export const getProductsByQuery = async (query = "", filterType = "All") => {
   const params = {};
-  if (searchQuery) params.name_like = searchQuery.toLowerCase();
-  if (category !== "All") params.category = category;
+  if (filterType === "category" && query && query !== "All") {
+    params.category = query; // Exact match for category
+    console.log("API query params:", params); // Debug API params
+  }
   const response = await axios.get(`${API_URL}/products`, { params });
+  console.log("API response data:", response.data); // Debug response
   return response.data;
 };
 
