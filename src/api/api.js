@@ -26,10 +26,10 @@ export const getProductsByQuery = async (query = "", filterType = "All") => {
   const params = {};
   if (filterType === "category" && query && query !== "All") {
     params.category = query; // Exact match for category
-    console.log("API query params:", params); // Debug API params
+    // console.log("API query params:", params); // Debug API params
   }
   const response = await axios.get(`${API_URL}/products`, { params });
-  console.log("API response data:", response.data); // Debug response
+  // console.log("API response data:", response.data); // Debug response
   return response.data;
 };
 
