@@ -41,7 +41,7 @@ function Home() {
             product.category.toLowerCase().includes(lowerQuery)
         );
       }
-      console.log("Fethced products:", filteredData); // Debug
+      console.log("Fetched products:", filteredData); // Debug
       setProducts(filteredData);
       setLoading(false);
     } catch (error) {
@@ -52,7 +52,7 @@ function Home() {
   }, []);
 
   // Debounce fetch
-  const debouncedFetch = useCallback(debounce(fetchProducts, 1000), [
+  const debouncedFetch = useCallback(debounce(fetchProducts, 500), [
     fetchProducts,
   ]);
 
@@ -66,15 +66,28 @@ function Home() {
 
   // Handle search
   useEffect(() => {
-    setCategory("All"); // Reset category when searching
-    debouncedFetch(searchQuery, "search");
-  }, [searchQuery, debouncedFetch]);
+    if (searchQuery) {
+      // Only trigger search if query is non-empty
+      setCategory("All"); // Reset category when searching
+      debouncedFetch(searchQuery, "search");
+    } else {
+      fetchProducts(category, "category"); // Use category when search is empty
+    }
+  }, [searchQuery, debouncedFetch, fetchProducts]);
 
   // Handle category
   useEffect(() => {
     setSearchQuery(""); // Reset search when changing category
     fetchProducts(category, "category");
   }, [category, fetchProducts]);
+
+  // Handle Enter key to clear search
+  const handleSearchSubmit = (e) => {
+    if (e.key === "Enter" && searchQuery) {
+      debouncedFetch(searchQuery, "search");
+      setSearchQuery(""); // Clear searchQuery only on Enter
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
@@ -89,6 +102,7 @@ function Home() {
           placeholder="Search products or categories..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
+          onKeyDown={handleSearchSubmit}
         />
         <select value={category} onChange={(e) => setCategory(e.target.value)}>
           <option value="All">All Categories</option>
