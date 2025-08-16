@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { getProductsByQuery } from "../api/api";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import "../styles/home.css";
 
@@ -10,6 +10,8 @@ function Home() {
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [category, setCategory] = useState("All");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [isSearching, setIsSearching] = useState(false);
 
   // Fetch Products
   const fetchProducts = useCallback(async (query, filterType) => {
@@ -39,22 +41,37 @@ function Home() {
   // Initial fetch
   useEffect(
     function () {
-      fetchProducts("", "category");
+      const query = searchParams.get("q") || ""; // Read q param
+      const cat = searchParams.get("category") || "All"; // Read category param
+      setSearchQuery(query);
+      setCategory(cat);
+      setIsSearching(!!query);
+      if (query) {
+        fetchProducts(query, "search");
+      } else if (cat !== "All") {
+        fetchProducts(cat, "category");
+      } else {
+        fetchProducts("", "category");
+      }
     },
-    [fetchProducts]
+    [fetchProducts, searchParams]
   );
 
   // Handle category
   useEffect(() => {
+    if (isSearching) return; // skip category fetch during search
     setSearchQuery(""); // Reset search when changing category
     fetchProducts(category, "category");
-  }, [category, fetchProducts]);
+    setSearchParams(category === "All" ? {} : { category }); // update URL with category param
+  }, [category, fetchProducts, setSearchParams]);
 
   // Handle search on Enter
   const handleSearchSubmit = (e) => {
     if (e.key === "Enter" && searchQuery) {
+      setIsSearching(true);
       setCategory("All"); // Reset category on search
       fetchProducts(searchQuery, "search");
+      setSearchParams({ q: searchQuery }); // Update URL with q param
       setSearchQuery(""); // Clear input after search
     }
   };
@@ -74,7 +91,12 @@ function Home() {
           onChange={(e) => setSearchQuery(e.target.value)}
           onKeyDown={handleSearchSubmit}
         />
-        <select value={category} onChange={(e) => setCategory(e.target.value)}>
+        <select
+          value={category}
+          onChange={(e) => {
+            setCategory(e.target.value);
+            setIsSearching(false); // reset is Searching on category change
+          }}>
           <option value="All">All Categories</option>
           <option value="Books">Books</option>
           <option value="Electronics">Electronics</option>
