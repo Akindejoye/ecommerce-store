@@ -1,9 +1,9 @@
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { getProductsByQuery } from "../api/api";
 import { Link, useSearchParams } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import "../styles/home.css";
-import { CartContext } from "../context/CartContext";
+// import { CartContext } from "../context/CartContext";
 
 function Home() {
   const [products, setProducts] = useState([]);
@@ -13,7 +13,8 @@ function Home() {
   const [category, setCategory] = useState("All");
   const [searchParams, setSearchParams] = useSearchParams();
   const [isSearching, setIsSearching] = useState(false);
-  const { addToCart } = useContext(CartContext);
+  const [suggestions, setSuggestions] = useState([]);
+  // const { addToCart } = useContext(CartContext);
 
   // Fetch Products
   const fetchProducts = useCallback(async (query, filterType) => {
@@ -40,7 +41,34 @@ function Home() {
     }
   }, []);
 
-  // Initial fetch
+  // Fetch Suggestion
+  const fetchSuggestions = useCallback(async (query) => {
+    if (!query) {
+      setSuggestions([]);
+      return;
+    }
+    try {
+      const data = await getProductsByQuery("", "category");
+      const lowerQuery = query.toLowerCase();
+      const uniqueCategories = [
+        ...new Set(data.map((product) => product.category)),
+      ];
+      const filteredSuggestions = [
+        ...data
+          .filter((product) => product.name.toLowerCase().includes(lowerQuery))
+          .map((product) => product.name),
+        ...uniqueCategories.filter((cat) =>
+          cat.toLowerCase().includes(lowerQuery)
+        ),
+      ];
+      setSuggestions([...new Set(filteredSuggestions)].slice(0, 5));
+    } catch (error) {
+      console.error("Suggestion fetch error:", error);
+      setSuggestions([]);
+    }
+  }, []);
+
+  // Initialize from URL params
   useEffect(
     function () {
       const query = searchParams.get("q") || ""; // Read q param
@@ -60,15 +88,10 @@ function Home() {
     [fetchProducts, searchParams]
   );
 
-  // Handle category
+  // Handle search query change for suggestions
   useEffect(() => {
-    if (isSearching) {
-      return;
-    }
-    fetchProducts(category, "category");
-    setSearchQuery(""); // Reset search when changing category
-    setSearchParams(category === "All" ? {} : { category }, { replace: true }); // update URL with category param. Use replace to avoid extra history entry
-  }, [category, fetchProducts, isSearching, setSearchParams]);
+    fetchSuggestions(searchQuery);
+  }, [searchQuery, fetchSuggestions]);
 
   // Handle search on Enter
   const handleSearchSubmit = (e) => {
@@ -81,6 +104,27 @@ function Home() {
     }
   };
 
+  // Handle suggestion click
+  const handleSuggestionClick = (suggestion) => {
+    setSearchQuery(suggestion);
+    setIsSearching(true);
+    setCategory("All");
+    fetchProducts(suggestion, "search");
+    setSearchParams({ q: suggestion }, { replace: true });
+    setSearchQuery("");
+    setSuggestions([]);
+  };
+
+  // Handle category
+  useEffect(() => {
+    if (isSearching) {
+      return;
+    }
+    fetchProducts(category, "category");
+    setSearchQuery(""); // Reset search when changing category
+    setSearchParams(category === "All" ? {} : { category }, { replace: true }); // update URL with category param. Use replace to avoid extra history entry
+  }, [category, fetchProducts, isSearching, setSearchParams]);
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
   if (products.length === 0) return <div>No products found</div>;
@@ -89,24 +133,40 @@ function Home() {
     <div className="home">
       <h2>Products</h2>
       <div className="filters">
-        <input
-          type="text"
-          placeholder="Search products or categories..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          onKeyDown={handleSearchSubmit}
-        />
-        <select
-          value={category}
-          onChange={(e) => {
-            setCategory(e.target.value);
-            setIsSearching(false); // CHANGED: Reset isSearching on category change
-          }}>
-          <option value="All">All Categories</option>
-          <option value="Books">Books</option>
-          <option value="Electronics">Electronics</option>
-          <option value="Appliances">Appliances</option>
-        </select>
+        <div className="select-box">
+          <select
+            value={category}
+            onChange={(e) => {
+              setCategory(e.target.value);
+              setIsSearching(false); // CHANGED: Reset isSearching on category change
+            }}>
+            <option value="All">All Categories</option>
+            <option value="Books">Books</option>
+            <option value="Electronics">Electronics</option>
+            <option value="Appliances">Appliances</option>
+          </select>
+        </div>
+        <div className="input-box">
+          <input
+            type="text"
+            placeholder="Search products or categories..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            onKeyDown={handleSearchSubmit}
+          />
+          {suggestions.length > 0 && (
+            <ul className="suggestions">
+              {suggestions.map((suggestion, index) => (
+                <li
+                  key={index}
+                  onClick={() => handleSuggestionClick(suggestion)}
+                  className="suggestion-item">
+                  {suggestion}
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
       </div>
       <div className="product-list">
         {products.map((product) => (

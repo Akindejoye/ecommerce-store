@@ -15,12 +15,8 @@
   margin-bottom: 2rem;
 }
 
-.filters input {
-  padding: 0.5rem;
-  font-size: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 4px;
-  flex: 1;
+.filters .select-box {
+  border: 2px solid red;
 }
 
 .filters select {
@@ -28,6 +24,42 @@
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
+}
+
+.filters .input-box {
+  width: 70%;
+}
+
+.filters .input-box input {
+  width: 100%;
+  height: 100%;
+  padding: 0.5rem;
+  font-size: 1rem;
+  border: 1px solid #ddd;
+  outline: none;
+  flex: 1;
+}
+
+.suggestions {
+  width: 63.75%;
+  border: 2px solid blue;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  background: #fff;
+  border: 1px solid #ddd;
+  position: absolute;
+  z-index: 1000;
+}
+
+.suggestion-item {
+  padding: 8px 12px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.suggestion-item:hover {
+  background: #f0f0f0;
 }
 
 .product-list {
