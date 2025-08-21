@@ -14,7 +14,7 @@ function Home() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [isSearching, setIsSearching] = useState(false);
   const [suggestions, setSuggestions] = useState([]);
-  // const { addToCart } = useContext(CartContext);
+  const [isSuggestionClicked, setIsSuggestionClicked] = useState(false);
 
   // Fetch Products
   const fetchProducts = useCallback(async (query, filterType) => {
@@ -42,31 +42,36 @@ function Home() {
   }, []);
 
   // Fetch Suggestion
-  const fetchSuggestions = useCallback(async (query) => {
-    if (!query) {
-      setSuggestions([]);
-      return;
-    }
-    try {
-      const data = await getProductsByQuery("", "category");
-      const lowerQuery = query.toLowerCase();
-      const uniqueCategories = [
-        ...new Set(data.map((product) => product.category)),
-      ];
-      const filteredSuggestions = [
-        ...data
-          .filter((product) => product.name.toLowerCase().includes(lowerQuery))
-          .map((product) => product.name),
-        ...uniqueCategories.filter((cat) =>
-          cat.toLowerCase().includes(lowerQuery)
-        ),
-      ];
-      setSuggestions([...new Set(filteredSuggestions)].slice(0, 5));
-    } catch (error) {
-      console.error("Suggestion fetch error:", error);
-      setSuggestions([]);
-    }
-  }, []);
+  const fetchSuggestions = useCallback(
+    async (query) => {
+      if (!query || isSuggestionClicked) {
+        setSuggestions([]);
+        return;
+      }
+      try {
+        const data = await getProductsByQuery("", "category");
+        const lowerQuery = query.toLowerCase();
+        const uniqueCategories = [
+          ...new Set(data.map((product) => product.category)),
+        ];
+        const filteredSuggestions = [
+          ...data
+            .filter((product) =>
+              product.name.toLowerCase().includes(lowerQuery)
+            )
+            .map((product) => product.name),
+          ...uniqueCategories.filter((cat) =>
+            cat.toLowerCase().includes(lowerQuery)
+          ),
+        ];
+        setSuggestions([...new Set(filteredSuggestions)].slice(0, 5));
+      } catch (error) {
+        console.error("Suggestion fetch error:", error);
+        setSuggestions([]);
+      }
+    },
+    [isSuggestionClicked]
+  );
 
   // Initialize from URL params
   useEffect(
@@ -101,19 +106,27 @@ function Home() {
       fetchProducts(searchQuery, "search");
       setSearchParams({ q: searchQuery }, { replace: true }); // Update URL with q param
       setSearchQuery(""); // Clear input after search
+      setSuggestions([]);
     }
   };
 
   // Handle suggestion click
   const handleSuggestionClick = (suggestion) => {
-    setSearchQuery(suggestion);
+    setIsSuggestionClicked(true);
+    setSuggestions([]);
     setIsSearching(true);
     setCategory("All");
     fetchProducts(suggestion, "search");
     setSearchParams({ q: suggestion }, { replace: true });
     setSearchQuery("");
-    setSuggestions([]);
   };
+
+  // Reset isSuggestionClicked after updates
+  useEffect(() => {
+    if (setIsSuggestionClicked) {
+      setIsSuggestionClicked(false);
+    }
+  }, [isSuggestionClicked]);
 
   // Handle category
   useEffect(() => {

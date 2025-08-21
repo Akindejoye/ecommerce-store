@@ -1,0 +1,27 @@
+.error-page {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1rem;
+  text-align: center;
+}
+
+.error-page h2 {
+  margin-bottom: 1rem;
+}
+
+.error-page p {
+  margin-bottom: 1rem;
+}
+
+.home-link {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: #007bff;
+  color: #fff;
+  text-decoration: none;
+  border-radius: 4px;
+}
+
+.home-link:hover {
+  background: #0056b3;
+}
