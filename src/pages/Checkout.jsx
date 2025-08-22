@@ -2,7 +2,7 @@ import { useContext, useState } from "react";
 import { CartContext } from "../context/CartContext";
 import { UserContext } from "../context/UserContext";
 import { postOrder } from "../api/api";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../styles/checkout.css";
 
 function Checkout() {
@@ -17,6 +17,7 @@ function Checkout() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [orderStatus, setOrderStatus] = useState(null);
+  const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -48,10 +49,39 @@ function Checkout() {
     }
   };
 
+  // Handle modal close
+  const handleModalClose = () => {
+    setOrderStatus(null);
+    navigate("/", { replace: true });
+  };
+
+  if (orderStatus) {
+    return (
+      <div className="success-modal">
+        <div className="modal-content">
+          <button className="modal-close" onClick={handleModalClose}>
+            x
+          </button>
+          <h2>Order Placed Successfully!</h2>
+          <p>Your order has been received. Thank you for shopping with us!</p>
+          <Link to="/" className="home-button" onClick={handleModalClose}>
+            Back to Homepage
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   if (cart.items.length === 0) {
     return (
-      <div className="checkout-empty">
-        <p>Your cart is empty</p>
+      <div className="checkout">
+        <h2>Checkout</h2>
+        <div className="checkout-empty">
+          <p>Your cart is empty</p>
+          <Link to="/" className="shop-now-button">
+            Shop Now
+          </Link>
+        </div>
         <Link to="/">Shop Now</Link>
       </div>
     );
