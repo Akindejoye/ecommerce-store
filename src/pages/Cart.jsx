@@ -1,12 +1,22 @@
 import { useContext } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { CartContext } from "../context/CartContext";
 import "../styles/cart.css";
 
 function Cart() {
   const { cart, updateQuantity, removeFromCart } = useContext(CartContext);
+  const navigate = useNavigate();
 
   if (!cart.items.length) {
-    return <div className="cart-empty">Your cart is empty</div>;
+    return (
+      <div className="cart">
+        <h2>Your Cart</h2>
+        <div className="cart-empty">Your cart is empty</div>
+        <Link to="/" className="shop-now-button">
+          Shop Now
+        </Link>
+      </div>
+    );
   }
 
   return (
@@ -30,6 +40,9 @@ function Cart() {
         </div>
       ))}
       <h3>Total: ${cart.total.toFixed(2)}</h3>
+      <button className="checkout-button" onClick={() => navigate("/checkout")}>
+        Go to Checkout
+      </button>
     </div>
   );
 }
