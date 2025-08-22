@@ -157,6 +157,13 @@ function Home() {
     setSearchParams(category === "All" ? {} : { category }, { replace: true }); // update URL with category param. Use replace to avoid extra history entry
   }, [category, fetchProducts, isSearching, setSearchParams]);
 
+  // Force input clear after searchParams update
+  useEffect(() => {
+    if (searchParams.get("q") || searchParams.get("category")) {
+      setSearchQuery("");
+    }
+  }, [searchParams]);
+
   if (loading) return <div>Loading...</div>;
   if (error) return <Navigate to="/error" replace state={{ message: error }} />;
 
