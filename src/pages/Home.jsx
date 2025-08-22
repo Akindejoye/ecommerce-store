@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { getProductsByQuery } from "../api/api";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate, Navigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
 import "../styles/home.css";
 // import { CartContext } from "../context/CartContext";
@@ -16,30 +16,45 @@ function Home() {
   const [suggestions, setSuggestions] = useState([]);
   const [isSuggestionClicked, setIsSuggestionClicked] = useState(false);
 
+  const navigate = useNavigate();
+
   // Fetch Products
-  const fetchProducts = useCallback(async (query, filterType) => {
-    setLoading(true);
-    try {
-      const data = await getProductsByQuery(query, filterType);
-      // console.log("Raw API data:", data); // Debug raw data
-      let filteredData = data || []; // Ensure data is array
-      if (filterType === "search" && query) {
-        const lowerQuery = query.toLowerCase();
-        filteredData = data.filter(
-          (product) =>
-            product.name.toLowerCase().includes(lowerQuery) ||
-            product.category.toLowerCase().includes(lowerQuery)
-        );
+  const fetchProducts = useCallback(
+    async (query, filterType) => {
+      setLoading(true);
+      try {
+        const data = await getProductsByQuery(query, filterType);
+        // console.log("Raw API data:", data); // Debug raw data
+        let filteredData = data || []; // Ensure data is array
+        if (filterType === "search" && query) {
+          const lowerQuery = query.toLowerCase();
+          filteredData = data.filter(
+            (product) =>
+              product.name.toLowerCase().includes(lowerQuery) ||
+              product.category.toLowerCase().includes(lowerQuery)
+          );
+        }
+        // console.log("Fetched products:", filteredData); // Debug
+        setProducts(filteredData);
+        setLoading(false);
+        if (filteredData.length === 0 && filterType === "search") {
+          navigate("/error", {
+            replace: true,
+            state: { message: "No products found for your search." },
+          });
+        }
+      } catch (error) {
+        console.error("Fetch error:", error); // Debug
+        setError("Failed to fetch products");
+        setLoading(false);
+        navigate("/error", {
+          replace: true,
+          state: { message: "Failed to fetch products. Please try again." },
+        });
       }
-      // console.log("Fetched products:", filteredData); // Debug
-      setProducts(filteredData);
-      setLoading(false);
-    } catch (error) {
-      console.error("Fetch error:", error); // Debug
-      setError("Failed to fetch products");
-      setLoading(false);
-    }
-  }, []);
+    },
+    [navigate]
+  );
 
   // Fetch Suggestion
   const fetchSuggestions = useCallback(
@@ -67,10 +82,14 @@ function Home() {
         setSuggestions([...new Set(filteredSuggestions)].slice(0, 5));
       } catch (error) {
         console.error("Suggestion fetch error:", error);
+        navigate("/error", {
+          replace: true,
+          state: { message: "Failed to fetch suggestion. Please try again." },
+        });
         setSuggestions([]);
       }
     },
-    [isSuggestionClicked]
+    [isSuggestionClicked, navigate]
   );
 
   // Initialize from URL params
@@ -139,8 +158,7 @@ function Home() {
   }, [category, fetchProducts, isSearching, setSearchParams]);
 
   if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error}</div>;
-  if (products.length === 0) return <div>No products found</div>;
+  if (error) return <Navigate to="/error" replace state={{ message: error }} />;
 
   return (
     <div className="home">
