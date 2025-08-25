@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState } from "react";
 import { getProductsByQuery } from "../api/api";
 import { Link, useSearchParams, useNavigate, Navigate } from "react-router-dom";
 import ProductCard from "../components/ProductCard";
+import Slider from "../components/slider/Slider";
 import "../styles/home.css";
 // import { CartContext } from "../context/CartContext";
 
@@ -167,6 +168,12 @@ function Home() {
   if (loading) return <div>Loading...</div>;
   if (error) return <Navigate to="/error" replace state={{ message: error }} />;
 
+  const slides = [
+    <div>Slide 1 🚀</div>,
+    <div>Slide 2 🔥</div>,
+    <div>Slide 3 ⭐</div>,
+  ];
+
   return (
     <div className="home">
       <h2>Products</h2>
@@ -206,6 +213,7 @@ function Home() {
           )}
         </div>
       </div>
+      <Slider slides={slides} />
       <div className="product-list">
         {products.map((product) => (
           <Link key={product.id} to={`/product/${product.id}`} className="link">
