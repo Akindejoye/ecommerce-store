@@ -5,6 +5,8 @@ import "../styles/login.css";
 
 function Login() {
   const [username, setUsername] = useState("");
+  const [isAdmin, setIsAdmin] = useState(false);
+
   const { login } = useContext(UserContext);
   const navigate = useNavigate();
 
@@ -12,7 +14,7 @@ function Login() {
     e.preventDefault();
     // Simulate login with a mock token
     const mockToken = `token-${username}-${Date.now()}`;
-    login(username, mockToken);
+    login(username, mockToken, isAdmin);
     navigate("/");
   };
 
@@ -28,6 +30,16 @@ function Login() {
             onChange={(e) => setUsername(e.target.value)}
             required
           />
+        </div>
+        <div>
+          <label>
+            Admin:
+            <input
+              type="checkbox"
+              checked={isAdmin}
+              onChanged={(e) => setIsAdmin(e.target.checked)}
+            />
+          </label>
         </div>
         <button type="submit">Login</button>
       </form>
