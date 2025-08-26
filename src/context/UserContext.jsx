@@ -11,7 +11,10 @@ export const UserProvider = ({ children }) => {
   const initialState = {
     isAuthenticated: !!localStorage.getItem("sessionToken"), // Check token on init
     user: localStorage.getItem("username")
-      ? { username: localStorage.getItem("username") }
+      ? {
+          username: localStorage.getItem("username"),
+          isAdmin: localStorage.getItem("isAdmin") === "true",
+        }
       : null,
     token: localStorage.getItem("sessionToken") || null,
   };
@@ -22,23 +25,26 @@ export const UserProvider = ({ children }) => {
   useEffect(() => {
     const token = localStorage.getItem("sessionToken");
     const username = localStorage.getItem("username");
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
     if (token && !state.isAuthenticated && username) {
       dispatch({
         type: "LOGIN",
-        payload: { user: { username }, token }, // Mock user data
+        payload: { user: { username, isAdmin }, token }, // Mock user data
       });
     }
   }, []);
 
-  const login = (username, token) => {
+  const login = (username, token, isAdmin = false) => {
+    localStorage.setItem("isAdmin", isAdmin);
     dispatch({
       type: "LOGIN",
-      payload: { user: { username }, token },
+      payload: { user: { username, isAdmin }, token },
     });
   };
 
   const logout = () => {
     dispatch({ type: "LOGOUT" });
+    localStorage.removeItem("isAdmin");
     clearCart(); // Clear cart on logout
   };
 
