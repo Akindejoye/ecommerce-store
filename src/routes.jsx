@@ -8,6 +8,17 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Checkout from "./pages/Checkout";
 import ErrorBoundary from "./components/ErrorBoundary";
 import ErrorPage from "./pages/ErrorPage";
+import { useContext } from "react";
+import { UserContext } from "./context/UserContext";
+
+// Admin-protected route component
+function AdminRoute({ children }) {
+  const { user } = useContext(UserContext);
+  if (!user || !user.isAdmin) {
+    return <ErrorPage message="Access denied. Admins only." />;
+  }
+  return children;
+}
 
 const router = createBrowserRouter([
   {
@@ -62,6 +73,15 @@ const router = createBrowserRouter([
         <Navbar />
         <Checkout />
       </ProtectedRoute>
+    ),
+  },
+  {
+    path: "/admin",
+    element: (
+      <AdminRoute>
+        <Navbar />
+        <AdminPanel />
+      </AdminRoute>
     ),
   },
   {
