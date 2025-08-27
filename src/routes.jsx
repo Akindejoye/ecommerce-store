@@ -10,6 +10,7 @@ import ErrorBoundary from "./components/ErrorBoundary";
 import ErrorPage from "./pages/ErrorPage";
 import { useContext } from "react";
 import { UserContext } from "./context/UserContext";
+import AdminPanel from "./pages/AdminPanel";
 
 // Admin-protected route component
 function AdminRoute({ children }) {

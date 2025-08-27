@@ -138,7 +138,7 @@ function AdminPanel() {
   return (
     <div className="admin-panel">
       <h2>{isEditing ? "Edit Product" : "Add New Product"}</h2>
-      <form className="product-form" onSubmit={handleSubmit}>
+      <form className="admin-product-form" onSubmit={handleSubmit}>
         <label>
           Name:
           <input
@@ -216,18 +216,18 @@ function AdminPanel() {
         {error && <p className="error">{error}</p>}
       </form>
       <h3>Products</h3>
-      <div className="product-list">
+      <div className="admin-product-list">
         {products.length === 0 ? (
           <p>No products available.</p>
         ) : (
           products.map((product) => (
-            <div className="product-item" key={product.id}>
+            <div className="admin-product-item" key={product.id}>
               <img
                 src={product.image}
                 alt={product.name}
-                className="product-image"
+                className="admin-product-image"
               />
-              <div className="product-details">
+              <div className="admin-product-details">
                 <p>
                   <strong>{product.name}</strong>
                 </p>
@@ -235,7 +235,7 @@ function AdminPanel() {
                 <p>Description: {product.description}</p>
                 <p>Category: {product.category}</p>
               </div>
-              <div className="product-actions">
+              <div className="admin-product-actions">
                 <button onClick={() => handleEdit(product)}>Edit</button>
                 <button onClick={() => handleDelete(product.id)}>Delete</button>
               </div>
