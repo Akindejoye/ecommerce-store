@@ -102,7 +102,7 @@ export const userReducer = (state, action) => {
       // Clear token from localStorage
       localStorage.removeItem("sessionToken");
       localStorage.removeItem("username");
-      localStorage.removedItem("isAdmin");
+      localStorage.removeItem("isAdmin");
       return {
         ...state,
         isAuthenticated: false,

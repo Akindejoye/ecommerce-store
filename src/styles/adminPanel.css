@@ -10,36 +10,98 @@
   margin-bottom: 1rem;
 }
 
-.admin-product-form {
+.add-product-button {
+  display: block;
+  margin: 0 auto 1rem;
+  background-color: #28a745;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 4px;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.add-product-button:hover {
+  background-color: #218838;
+}
+
+.product-form-panel {
+  position: fixed;
+  top: 0;
+  width: 400px;
+  max-width: 90%;
+  height: 100%;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  padding: 2rem;
+  overflow-y: auto;
+  transition: transform 0.3s ease-in-out; /* CHANGED: Animation for sliding */
+}
+
+.product-form-panel.slide-in-left {
+  left: 0;
+  transform: translateX(-100%); /* CHANGED: Start off-screen left */
+}
+
+.product-form-panel.slide-in-left.active {
+  transform: translateX(0); /* CHANGED: Slide in to visible */
+}
+
+.product-form-panel.slide-in-right {
+  right: 0;
+  transform: translateX(100%); /* CHANGED: Start off-screen right */
+}
+
+.product-form-panel.slide-in-right.active {
+  transform: translateX(0); /* CHANGED: Slide in to visible */
+}
+
+.product-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
-  margin-bottom: 2rem;
 }
 
-.admin-product-form label {
+.product-form h3 {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.close-form-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.product-form label {
   display: flex;
   flex-direction: column;
   font-size: 1.1rem;
 }
 
-.admin-product-form input,
-.admin-product-form select,
-.admin-product-form textarea {
+.product-form input,
+.product-form select,
+.product-form textarea {
   padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #ddd;
   border-radius: 4px;
 }
 
-.admin-product-form textarea {
+.product-form textarea {
   min-height: 100px;
   resize: vertical;
 }
 
-.admin-product-form button {
+.product-form button {
   background-color: #28a745;
-  color: #fff;
+  color: white;
   padding: 0.75rem;
   border: none;
   border-radius: 4px;
@@ -47,21 +109,13 @@
   cursor: pointer;
 }
 
-.admin-product-form button:hover {
+.product-form button:hover {
   background-color: #218838;
 }
 
-.admin-product-form button:disabled {
+.product-form button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
-}
-
-.cancel-button {
-  background-color: #dc3545;
-}
-
-.cancel-button:hover {
-  background-color: #c82333;
 }
 
 .error {
@@ -105,7 +159,7 @@
 
 .admin-product-actions button {
   background-color: #007bff;
-  color: #fff;
+  color: white;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;

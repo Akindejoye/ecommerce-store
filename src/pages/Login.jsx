@@ -37,7 +37,7 @@ function Login() {
             <input
               type="checkbox"
               checked={isAdmin}
-              onChanged={(e) => setIsAdmin(e.target.checked)}
+              onChange={(e) => setIsAdmin(e.target.checked)}
             />
           </label>
         </div>

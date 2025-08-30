@@ -42,10 +42,11 @@ export const UserProvider = ({ children }) => {
     });
   };
 
-  const logout = () => {
+  const logout = (navigate) => {
     dispatch({ type: "LOGOUT" });
     localStorage.removeItem("isAdmin");
     clearCart(); // Clear cart on logout
+    if (navigate) navigate("/");
   };
 
   return (
