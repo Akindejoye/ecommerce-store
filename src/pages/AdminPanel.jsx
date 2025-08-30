@@ -44,6 +44,17 @@ function AdminPanel() {
     fetchProducts();
   }, [navigate]);
 
+  useEffect(() => {
+    if (isFormVisible) {
+      const timer = setTimeout(() => {
+        document.querySelector(".product-form-panel")?.classList.add("active");
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      document.querySelector(".product-form-panel")?.classList.remove("active");
+    }
+  }, [isFormVisible]);
+
   // Handle form input changes
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
