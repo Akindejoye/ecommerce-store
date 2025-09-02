@@ -41,6 +41,11 @@
       "category": "Electronics"
     }
   ],
+  "categories": [
+    { "id": "1", "name": "Books" },
+    { "id": "2", "name": "Electronics" },
+    { "id": "3", "name": "Appliances" }
+  ],
   "users": [],
   "orders": [
     {

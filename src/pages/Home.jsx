@@ -176,7 +176,6 @@ function Home() {
 
   return (
     <div className="home">
-      <h2>Products</h2>
       <div className="filters">
         <div className="select-box">
           <select
