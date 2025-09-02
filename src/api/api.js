@@ -71,3 +71,41 @@ export const deleteProduct = async (id) => {
     console.error(`Error deleting product ${id}:`, error);
   }
 };
+
+export const getCategories = async () => {
+  try {
+    const response = await axios.get(`${API_URL}/categories`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching categories:", error);
+    throw error;
+  }
+};
+
+export const createCategory = async (category) => {
+  try {
+    const response = await axios.post(`${API_URL}/categories`, category);
+    return response.data;
+  } catch (error) {
+    console.error("Error creating category:", error);
+  }
+};
+
+export const updateCategory = async (id, category) => {
+  try {
+    const response = await axios.put(`${API_URL}/categories/${id}`, category);
+    return response.data;
+  } catch (error) {
+    console.error(`Error updating category ${id}:`, error);
+    throw error;
+  }
+};
+
+export const deleteCategory = async (id) => {
+  try {
+    await axios.delete(`${API_URL}/categories/${id}`);
+  } catch (error) {
+    console.error(`Error deleting category ${id}:`, error);
+    throw error;
+  }
+};
