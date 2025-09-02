@@ -5,12 +5,17 @@ import {
   updateProduct,
   deleteProduct,
   getProducts,
+  getCategories,
+  updateCategory,
+  createCategory,
+  deleteCategory,
 } from "../api/api";
 import "../styles/adminPanel.css";
 
 function AdminPanel() {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
+  const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [formData, setFormData] = useState({
@@ -23,25 +28,35 @@ function AdminPanel() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [isFormVisible, setIsFormVisible] = useState(false); // CHANGED: Track form visibility
+  const [isCategoryPanelVisible, setIsCategoryPanelVisible] = useState(false);
+  const [categoryFormData, setCategoryFormData] = useState({
+    id: null,
+    name: "",
+  });
+  const [isEditingCategory, setIsEditingCategory] = useState(false);
 
-  // Fetch all products
+  // Fetch all products and categories
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const data = await getProducts();
-        setProducts(data);
+        const [productData, categoryData] = await Promise.all([
+          getProducts(),
+          getCategories(),
+        ]);
+        setProducts(productData);
+        setCategories(categoryData);
         setLoading(false);
       } catch {
-        setError("Failed to fetch products");
+        setError("Failed to fetch data");
         setLoading(false);
         navigate("/error", {
           replace: true,
-          state: { message: "Failed to fetch products." },
+          state: { message: "Failed to fetch data." },
         });
       }
     };
-    fetchProducts();
+    fetchData();
   }, [navigate]);
 
   useEffect(() => {
@@ -54,6 +69,19 @@ function AdminPanel() {
       document.querySelector(".product-form-panel")?.classList.remove("active");
     }
   }, [isFormVisible]);
+
+  useEffect(() => {
+    if (isCategoryPanelVisible) {
+      const timer = setTimeout(() => {
+        document.querySelector(".category-form-panel")?.classList.add("active");
+      }, 10);
+      return () => clearTimeout(timer);
+    } else {
+      document
+        .querySelector(".category-form-panel")
+        ?.classList.remove("active");
+    }
+  }, [isCategoryPanelVisible]);
 
   // Handle form input changes
   const handleChange = (e) => {
@@ -174,16 +202,99 @@ function AdminPanel() {
     setError(null);
   };
 
+  const handleCategoryChange = (e) => {
+    setCategoryFormData({ ...categoryFormData, name: e.target.value });
+  };
+
+  const handleCategorySubmit = async (e) => {
+    e.preventDefault();
+    if (!categoryFormData.name) {
+      setError("Category name is required");
+      return;
+    }
+    setLoading(true);
+    try {
+      if (isEditingCategory) {
+        await updateCategory(categoryFormData.id, {
+          name: categoryFormData.name,
+        });
+      } else {
+        await createCategory({ name: categoryFormData.name });
+      }
+      setCategoryFormData({ id: null, name: "" });
+      setIsEditingCategory(false);
+      setIsCategoryPanelVisible(false);
+      setError(null);
+      const data = await getCategories();
+      setCategories(data);
+      setLoading(false);
+    } catch {
+      setError("Failed to save category");
+      setLoading(false);
+      navigate("/error", {
+        replace: true,
+        state: { message: "Failed to save category." },
+      });
+    }
+  };
+
+  const handleEditCategory = (category) => {
+    setCategoryFormData({ id: category.id, name: category.name });
+    setIsEditingCategory(true);
+    setIsCategoryPanelVisible(true);
+  };
+
+  const handleDeleteCategory = async (id) => {
+    if (
+      window.confirm(
+        "Are you sure you want to delete this category? Product with this category may be affected."
+      )
+    ) {
+      setLoading(true);
+      try {
+        await deleteCategory(id);
+        setCategories(categories.filter((category) => category.id !== id));
+        setLoading(false);
+      } catch {
+        setError("Failed to delete catgory");
+        setLoading(false);
+        navigate("/error", {
+          replace: true,
+          state: { message: "Failed to delete category." },
+        });
+      }
+    }
+  };
+
+  const handleManageCategories = () => {
+    setCategoryFormData({ id: null, name: "" });
+    setIsEditingCategory(false);
+    setIsCategoryPanelVisible(true);
+  };
+
+  const handleCloseCategoryForm = () => {
+    setCategoryFormData({ id: null, name: "" });
+    setIsEditingCategory(false);
+    setIsCategoryPanelVisible(false);
+    setError(null);
+  };
+
   if (loading) return <div>Loading...</div>;
   if (error) return <div>Error: {error}</div>;
 
   return (
     <div className="admin-panel">
       <h2>Admin Dashboard</h2>
-      <button className="add-product-button" onClick={handleAddProduct}>
-        Add New Product
-      </button>
-      {/* CHANGED: Conditional form rendering with slide class */}
+      <div className="admin-actions">
+        <button className="add-product-button" onClick={handleAddProduct}>
+          Add New Product
+        </button>
+        <button
+          className="manage-categories-button"
+          onClick={handleManageCategories}>
+          Manage Categories
+        </button>
+      </div>
       {isFormVisible && (
         <div
           className={`product-form-panel ${
@@ -245,9 +356,11 @@ function AdminPanel() {
                 onChange={handleChange}
                 required>
                 <option value="">Select Category</option>
-                <option value="Books">Books</option>
-                <option value="Electronics">Electronics</option>
-                <option value="Appliances">Appliances</option>
+                {categories.map((category) => (
+                  <option key={category.id} value={category.name}>
+                    {category.name}
+                  </option>
+                ))}
               </select>
             </label>
             <button type="submit" disabled={loading}>
@@ -259,6 +372,57 @@ function AdminPanel() {
             </button>
             {error && <p className="error">{error}</p>}
           </form>
+        </div>
+      )}
+      {isCategoryPanelVisible && (
+        <div className="category-form-panel slide-in-left">
+          <form className="category-form" onSubmit={handleCategorySubmit}>
+            <h3>{isEditingCategory ? "Edit Category" : "Add New Category"}</h3>
+            <button
+              type="button"
+              className="close-form-button"
+              onClick={handleCloseCategoryForm}>
+              ×
+            </button>
+            <label>
+              Category Name:
+              <input
+                type="text"
+                name="name"
+                value={categoryFormData.name}
+                onChange={handleCategoryChange}
+                required
+              />
+            </label>
+            <button type="submit" disabled={loading}>
+              {loading
+                ? "Saving..."
+                : isEditingCategory
+                ? "Update Category"
+                : "Add Category"}
+            </button>
+            {error && <p className="error">{error}</p>}
+          </form>
+          <h3>Categories</h3>
+          <div className="category-list">
+            {categories.length === 0 ? (
+              <p>No categories available.</p>
+            ) : (
+              categories.map((category) => (
+                <div key={category.id} className="category-item">
+                  <span>{category.name}</span>
+                  <div className="category-actions">
+                    <button onClick={() => handleEditCategory(category)}>
+                      Edit
+                    </button>
+                    <button onClick={() => handleDeleteCategory(category.id)}>
+                      Delete
+                    </button>
+                  </div>
+                </div>
+              ))
+            )}
+          </div>
         </div>
       )}
       <h3>Products</h3>

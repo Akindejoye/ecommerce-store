@@ -10,9 +10,15 @@
   margin-bottom: 1rem;
 }
 
-.add-product-button {
-  display: block;
-  margin: 0 auto 1rem;
+.admin-actions {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.add-product-button,
+.manage-categories-button {
   background-color: #28a745;
   color: white;
   padding: 0.75rem 1.5rem;
@@ -22,11 +28,13 @@
   cursor: pointer;
 }
 
-.add-product-button:hover {
+.add-product-button:hover,
+.manage-categories-button:hover {
   background-color: #218838;
 }
 
-.product-form-panel {
+.product-form-panel,
+.category-form-panel {
   position: fixed;
   top: 0;
   width: 400px;
@@ -37,34 +45,38 @@
   z-index: 1000;
   padding: 2rem;
   overflow-y: auto;
-  transition: transform 0.3s ease-in-out; /* CHANGED: Animation for sliding */
+  transition: transform 0.3s ease-in-out;
 }
 
-.product-form-panel.slide-in-left {
+.product-form-panel.slide-in-left,
+.category-form-panel.slide-in-left {
   left: 0;
-  transform: translateX(-100%); /* CHANGED: Start off-screen left */
+  transform: translateX(-100%);
 }
 
-.product-form-panel.slide-in-left.active {
-  transform: translateX(0); /* CHANGED: Slide in to visible */
+.product-form-panel.slide-in-left.active,
+.category-form-panel.slide-in-left.active {
+  transform: translateX(0);
 }
 
 .product-form-panel.slide-in-right {
   right: 0;
-  transform: translateX(100%); /* CHANGED: Start off-screen right */
+  transform: translateX(100%);
 }
 
 .product-form-panel.slide-in-right.active {
-  transform: translateX(0); /* CHANGED: Slide in to visible */
+  transform: translateX(0);
 }
 
-.product-form {
+.product-form,
+.category-form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 
-.product-form h3 {
+.product-form h3,
+.category-form h3 {
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -79,7 +91,8 @@
   cursor: pointer;
 }
 
-.product-form label {
+.product-form label,
+.category-form label {
   display: flex;
   flex-direction: column;
   font-size: 1.1rem;
@@ -87,7 +100,8 @@
 
 .product-form input,
 .product-form select,
-.product-form textarea {
+.product-form textarea,
+.category-form input {
   padding: 0.5rem;
   font-size: 1rem;
   border: 1px solid #ddd;
@@ -99,7 +113,8 @@
   resize: vertical;
 }
 
-.product-form button {
+.product-form button,
+.category-form button {
   background-color: #28a745;
   color: white;
   padding: 0.75rem;
@@ -109,11 +124,13 @@
   cursor: pointer;
 }
 
-.product-form button:hover {
+.product-form button:hover,
+.category-form button:hover {
   background-color: #218838;
 }
 
-.product-form button:disabled {
+.product-form button:disabled,
+.category-form button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
@@ -121,6 +138,48 @@
 .error {
   color: red;
   text-align: center;
+}
+
+.category-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.category-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.category-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.category-actions button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.category-actions button:hover {
+  background-color: #0056b3;
+}
+
+.category-actions button:last-child {
+  background-color: #dc3545;
+}
+
+.category-actions button:last-child:hover {
+  background-color: #c82333;
 }
 
 .admin-product-list {

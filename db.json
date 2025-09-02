@@ -42,9 +42,22 @@
     }
   ],
   "categories": [
-    { "id": "1", "name": "Books" },
-    { "id": "2", "name": "Electronics" },
-    { "id": "3", "name": "Appliances" }
+    {
+      "id": "1",
+      "name": "Books"
+    },
+    {
+      "id": "2",
+      "name": "Electronics"
+    },
+    {
+      "id": "3",
+      "name": "Appliances"
+    },
+    {
+      "id": "0e99",
+      "name": "Clothes"
+    }
   ],
   "users": [],
   "orders": [
